@@ -1,0 +1,38 @@
+name: Deploy Jekyll Site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 或者您使用的主要分支名称，例如 master
+
+permissions:
+  contents: read
+  id-token: write  # 添加这一行以赋予 id-token: write 权限
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'  # 根据您的需求选择 Ruby 版本
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Build the site
+        run: bundle exec jekyll build
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: github-pages
+          # 其他必要的配置项，例如 environment, folder 等
